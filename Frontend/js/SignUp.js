@@ -1,7 +1,7 @@
-let Submit = document.getElementById("submit");
-Submit.addEventListener("click", signup);
-//Driver function
-async function signup() {
+
+//Driver function- calling this function in form's onsubmit method.
+async function signup(event) {
+  event.preventDefault();
   let signupObj = {
     name: document.getElementById("name").value,
     mail: document.getElementById("mail").value,
