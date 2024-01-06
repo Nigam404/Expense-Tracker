@@ -5,8 +5,17 @@ async function login(event) {
     password: document.getElementById("password").value,
   };
 
-  let response = await axios.post("http://localhost:3000/login", obj);
-  alert(response.data.message);
-  const resDiv = document.getElementById("result");
-  resDiv.innerText = response.data.message;
+  try {
+    let info = await axios.post("http://localhost:3000/login", obj);
+    if (info.status == 200) {
+      const resDiv = document.getElementById("result");
+      resDiv.innerText = info.data.message;
+      alert(info.data.message);
+    }
+  }
+  //to catch error coming from backend. 
+  catch (error) {
+    console.log(error);
+    alert(error.response.data);
+  }
 }

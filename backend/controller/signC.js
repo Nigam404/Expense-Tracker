@@ -19,19 +19,24 @@ exports.signUp = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
-  //finding the user with entered mail and password.
+  //finding the user with entered mail.
   const response = await User.findAll({
     where: {
       mail: req.body.mail,
-      password: req.body.password,
     },
   });
-  //if user found.
+
+  //if user found with entered mail.
   if (response.length > 0) {
-    res.status(200).json({ message: "Login Successful!!!" });
+    //checking password
+    if (response[0].password == req.body.password) {
+      res.status(200).json({ message: "Login Successful!!!" });
+    } else {
+      res.status(401).send("User Not Authorized!");
+    }
   }
-  //if user not found
+  //if user not found.
   else {
-    res.json({ message: "Login Failed - Invalid mail/password!!!" });
+    res.status(404).send("User Not Found!");
   }
 };
