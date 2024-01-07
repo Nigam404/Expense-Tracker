@@ -11,10 +11,10 @@ async function login(event) {
       const resDiv = document.getElementById("result");
       resDiv.innerText = info.data.message;
       alert(info.data.message);
+      location.replace("Home.html");
     }
-  }
-  //to catch error coming from backend. 
-  catch (error) {
+  } catch (error) {
+    //to catch error coming from backend.
     console.log(error);
     alert(error.response.data);
   }
