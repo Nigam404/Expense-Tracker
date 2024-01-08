@@ -2,20 +2,34 @@ const Expense = require("../models/expenseM");
 
 //getting expense controller...............................................................................
 module.exports.getExpense = async (req, res, next) => {
-  const expenses = await Expense.findAll();
-  res.json(expenses);
+  try {
+    //Method 1-normal sequelize method to find expenses.
+    const expenses = await Expense.findAll({ where: { userId: req.user.id } }); //getting expenses added by authenticated user.
+
+    //Method 2-Sequelize association method to find expenses.
+    // const expenses = req.user.getExpense();
+    console.log("USER ID-", req.user.id);
+
+    if (expenses.length > 0) {
+      res.json(expenses);
+    } else {
+      res.json([]);
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 //post or adding expense controller........................................................................
 module.exports.postExpense = async (req, res, next) => {
   //req.body is the object pass by axios from front-end.
   const savedData = await Expense.create({
-    //leftside is Expense model props and rightside is the user passed value.
     amount: req.body.amount,
     description: req.body.description,
     catagory: req.body.catagory,
+    userId: req.user.id, //req.user carry the user info that passed from authentication middleware.
   });
-  console.log("data saved in DB");
+  console.log("data saved in DB", savedData.dataValues);
   res.json(savedData.dataValues);
 };
 

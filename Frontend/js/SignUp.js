@@ -1,4 +1,3 @@
-
 //Driver function- calling this function in form's onsubmit method.
 async function signup(event) {
   event.preventDefault();
@@ -12,6 +11,7 @@ async function signup(event) {
   if (response.status == 201) {
     let resDiv = document.getElementById("result");
     resDiv.innerText = "User created successfully";
+    location.replace("LogIn.html");
   } else {
     let resDiv = document.getElementById("result");
     resDiv.innerText = response.data.remark;

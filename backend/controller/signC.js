@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
-const User = require("../models/signM");
+const jwt = require("jsonwebtoken");
+const User = require("../models/userM");
 
-//........................................................................................
+//Controller functions........................................................................................
 exports.signUp = async (req, res, next) => {
   //checking if user is already registered.
   let existingUser = await User.findAll({ where: { mail: req.body.mail } });
@@ -25,6 +26,15 @@ exports.signUp = async (req, res, next) => {
   }
 };
 
+//Token generate function.........................................
+function generateAccessToken(id, name) {
+
+  return jwt.sign(
+    { userId: id, name: name }, //property for which we want to generate token.
+    "nigamkalpataru" //secret key
+  );
+}
+
 //.....................................................................................
 exports.login = async (req, res, next) => {
   //finding the user with entered mail.
@@ -44,7 +54,10 @@ exports.login = async (req, res, next) => {
         res.status(500).send("Something Went Wrong");
       }
       if (result === true) {
-        res.status(200).json({ message: "Login Successful!!!" });
+        res.status(200).json({
+          message: "Login Successful!!!",
+          token: generateAccessToken(response[0].id, response[0].name), //sending token along with success msg.
+        });
       } else {
         res.status(401).send("User Not Authorized!");
       }

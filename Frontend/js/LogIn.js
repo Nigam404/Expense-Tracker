@@ -11,6 +11,8 @@ async function login(event) {
       const resDiv = document.getElementById("result");
       resDiv.innerText = info.data.message;
       alert(info.data.message);
+
+      localStorage.setItem("Token", info.data.token); //saving token in local storage.
       location.replace("Home.html");
     }
   } catch (error) {

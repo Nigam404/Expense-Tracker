@@ -44,6 +44,7 @@ async function createElement(obj) {
 
 //DRIVER FUNCTION..........................................................................................
 async function addExpense() {
+  const token = localStorage.getItem("Token"); //getting token from LS.
   let obj = {
     amount: document.getElementById("amount").value,
     description: document.getElementById("desc").value,
@@ -52,18 +53,24 @@ async function addExpense() {
   console.log(obj);
 
   // Storing in DB.
-  const insertedObj = await axios.post("http://localhost:3000/postExp", obj);
+  const insertedObj = await axios.post("http://localhost:3000/postExp", obj, {
+    headers: { Authorization: token },
+  });
 
   await createElement(insertedObj);
   location.reload(); //this will reload the current page using DOM.
 }
 
 //Below code will execute always when dom get reloaded....................................................
-axios
-  .get("http://localhost:3000/getExp")
-  .then((res) => {
-    res.data.forEach((e) => {
-      createElement(e);
+window.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("Token"); //getting token from LS.
+  const res = await axios.get("http://localhost:3000/getExp", {
+    headers: { Authorization: token },
+  });
+
+  if (res.data.length > 0) {
+    res.data.forEach(async (e) => {
+      await createElement(e);
     });
-  })
-  .catch((err) => console.log(err));
+  }
+});
