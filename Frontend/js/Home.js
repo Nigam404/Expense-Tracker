@@ -74,3 +74,41 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
+//Buy-premium button click event...................................................
+document.getElementById("rzp-btn").onclick = async () => {
+  const token = localStorage.getItem("Token");
+  const response = await axios.get(
+    "http://localhost:3000/purchase/premiummembership",
+    { headers: { Authorization: token } }
+  );
+  console.log("-->premium-->", response);
+
+  var options = {
+    key: response.data.key_id, //from this razoypay will know which company is requesting payment.
+    order_id: response.data.order.id, //for one time payment
+    //this handler will handle the success payment.
+    handler: async () => {
+      await axios.post(
+        "http://localhost:3000/purchase/update-transaction-status-success",
+        {
+          order_id: options.order_id,
+          payment_id: response.razorpay_payment_id,
+        },
+        { headers: { Authorization: token } }
+      );
+      alert("You're a premium user now");
+    },
+  };
+  const rz_pay = new Razorpay(options); //included using script src.
+  rz_pay.open();
+  rz_pay.on("payment.failed", async () => {
+    let orderObj = { order_id: response.data.order.id };
+    await axios.post(
+      "http://localhost:3000/purchase/update-transaction-status-failed",
+      orderObj,
+      { headers: { Authorization: token } }
+    );
+    alert("Payment Failed");
+  });
+};

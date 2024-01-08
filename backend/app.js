@@ -4,9 +4,11 @@ const cors = require("cors");
 
 const signRouter = require("./routes/signR");
 const expenseRouter = require("./routes/expenseR");
+const purchaseRouter = require("./routes/purchaseR");
 
 const User = require("./models/userM");
 const Expense = require("./models/expenseM");
+const Order = require("./models/orderM");
 
 const sequelize = require("./utils/database");
 
@@ -19,10 +21,14 @@ app.use(bodyparser.json());
 //routes
 app.use(signRouter);
 app.use(expenseRouter);
+app.use(purchaseRouter);
 
 //association
 User.hasMany(Expense);
 Expense.belongsTo(User);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 //...
 sequelize
