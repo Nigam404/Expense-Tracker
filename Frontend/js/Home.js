@@ -68,18 +68,34 @@ window.addEventListener("DOMContentLoaded", async () => {
     headers: { Authorization: token },
   });
 
+  //creating UI element for each expense found for logged in user.
   if (res.data.length > 0) {
     res.data.forEach(async (e) => {
       await createElement(e);
     });
   }
+
+  //checking if the user is a premium member or not.
+  const id = res.data[0].userId;
+  const user = await axios.get(`http://localhost:3000/getuser/${id}`);
+  //hiding buy premium button if the user is already a premium user.
+  if (user.data.ispremiumuser === true) {
+    //hiding buy premium button and showing user about premium member.
+    document.getElementById("rzp-btn").style.visibility = "hidden";
+    document.getElementById("premiumMember").innerText =
+      "Congrats,You're a premium user.";
+  }
+
+  //putting user_name on UI.
+  document.getElementById("user-name").innerText = "Welcome " + user.data.name;
 });
 
-//Buy-premium button click event...................................................
+//Buy-premium button click event.........................................................................
 document.getElementById("rzp-btn").onclick = async () => {
   const token = localStorage.getItem("Token");
   const response = await axios.get(
     "http://localhost:3000/purchase/premiummembership",
+
     { headers: { Authorization: token } }
   );
   console.log("-->premium-->", response);
@@ -98,6 +114,10 @@ document.getElementById("rzp-btn").onclick = async () => {
         { headers: { Authorization: token } }
       );
       alert("You're a premium user now");
+      //hiding buy premium button and showing user about premium member.
+      document.getElementById("rzp-btn").style.visibility = "hidden";
+      document.getElementById("premiumMember").innerText =
+        "Congrats,You're a premium user.";
     },
   };
   const rz_pay = new Razorpay(options); //included using script src.
@@ -111,4 +131,25 @@ document.getElementById("rzp-btn").onclick = async () => {
     );
     alert("Payment Failed");
   });
+};
+
+//show leaderboard button click event...................................................................
+document.getElementById("leaderboard-btn").onclick = async () => {
+  const parent_div = document.getElementById("leaderboard-data");
+  const h2 = document.createElement("h2");
+  h2.innerText = "LEADERBOARD";
+  let UL = document.createElement("ul");
+  UL.className = "list-group";
+
+  const userWithTotalExpenses = await axios.get(
+    "http://localhost:3000/premium/leaderboard-data"
+  );
+
+  userWithTotalExpenses.data.forEach((detail) => {
+    let list = document.createElement("li");
+    list.className = "list-group-item";
+    list.innerText = detail.name + "-->" + detail.total;
+    UL.appendChild(list);
+  });
+  parent_div.appendChild(UL);
 };

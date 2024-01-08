@@ -5,6 +5,8 @@ const cors = require("cors");
 const signRouter = require("./routes/signR");
 const expenseRouter = require("./routes/expenseR");
 const purchaseRouter = require("./routes/purchaseR");
+const userRouter = require("./routes/userR");
+const premiumRouter = require("./routes/premiumR");
 
 const User = require("./models/userM");
 const Expense = require("./models/expenseM");
@@ -22,6 +24,8 @@ app.use(bodyparser.json());
 app.use(signRouter);
 app.use(expenseRouter);
 app.use(purchaseRouter);
+app.use(userRouter);
+app.use(premiumRouter);
 
 //association
 User.hasMany(Expense);
