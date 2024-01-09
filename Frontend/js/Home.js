@@ -57,6 +57,11 @@ async function addExpense() {
     headers: { Authorization: token },
   });
 
+  //updating total expense
+  await axios.post("http://localhost:3000/update-total-expense", obj, {
+    headers: { Authorization: token },
+  });
+
   await createElement(insertedObj);
   location.reload(); //this will reload the current page using DOM.
 }
@@ -148,7 +153,7 @@ document.getElementById("leaderboard-btn").onclick = async () => {
   userWithTotalExpenses.data.forEach((detail) => {
     let list = document.createElement("li");
     list.className = "list-group-item";
-    list.innerText = detail.name + "-->" + detail.total_cost;
+    list.innerText = detail.name + "-->" + detail.totalexpense;
     UL.appendChild(list);
   });
   parent_div.appendChild(UL);
