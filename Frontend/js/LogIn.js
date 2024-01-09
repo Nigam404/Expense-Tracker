@@ -1,3 +1,4 @@
+//Login button click event..........................................................................
 async function login(event) {
   event.preventDefault();
   let obj = {
@@ -21,3 +22,17 @@ async function login(event) {
     alert(error.response.data);
   }
 }
+
+//Forgot password button click event.................................................................
+const forgotPwBtn = document.getElementById("forgotpw");
+forgotPwBtn.onclick = async () => {
+  let email = prompt("Enter your email id");
+  let obj = {
+    mail: email,
+  };
+
+  const response = await axios.post(
+    "http://localhost:3000/password/forgotpassword",
+    obj
+  );
+};
