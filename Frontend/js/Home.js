@@ -148,7 +148,7 @@ document.getElementById("leaderboard-btn").onclick = async () => {
   userWithTotalExpenses.data.forEach((detail) => {
     let list = document.createElement("li");
     list.className = "list-group-item";
-    list.innerText = detail.name + "-->" + detail.total;
+    list.innerText = detail.name + "-->" + detail.total_cost;
     UL.appendChild(list);
   });
   parent_div.appendChild(UL);

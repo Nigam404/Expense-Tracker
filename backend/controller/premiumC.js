@@ -1,34 +1,22 @@
 const Expense = require("../models/expenseM");
 const User = require("../models/userM");
+const sequelize = require("../utils/database");
 exports.getLeaderBoardData = async (req, res, next) => {
   try {
-    const expenses = await Expense.findAll();
-    const users = await User.findAll();
-    //map for storing userid and their total expenses
-    const totalExpenses = {};
-
-    expenses.forEach((expense) => {
-      if (totalExpenses[expense.userId]) {
-        //if key already exist in userTotalExpenses
-        totalExpenses[expense.userId] += expense.amount;
-      }
-      //if key is coming first time to userTotalExpenses
-      else {
-        totalExpenses[expense.userId] = expense.amount;
-      }
+    //getting data by joining users and expenses table using sequelize ORM.
+    const userWithTotalExpenses = await User.findAll({
+      attributes: [
+        "id",
+        "name",
+        [sequelize.fn("sum", sequelize.col("expenses.amount")), "total_cost"],
+      ],
+      include: [{ model: Expense, attributes: [] }],
+      group: ["user.id"],
+      order: [["total_cost", "DESC"]],
     });
-
-    //for storing user name and total expenses.
-    const userWithTotalExpenses = [];
-    users.forEach((user) => {
-      userWithTotalExpenses.push({
-        name: user.name,
-        total: totalExpenses[user.id],
-      });
-    });
-
     res.json(userWithTotalExpenses);
   } catch (error) {
+    //catch block
     console.log(error);
   }
 };
