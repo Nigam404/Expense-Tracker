@@ -4,6 +4,7 @@ const token = localStorage.getItem("Token"); //getting token from Local Storage.
 //create element function................................................................................
 async function createElement(obj) {
   let ULlist = document.getElementById("datalist");
+
   //Creating list item for newly added data.
   let newLi = document.createElement("li");
   newLi.innerText = obj.amount + " " + obj.description + " " + obj.catagory;
@@ -60,17 +61,56 @@ window.addEventListener("DOMContentLoaded", async () => {
     headers: { Authorization: token },
   });
 
-  //creating UI element for each expense found for logged in user.
-  if (res.data.length > 0) {
-    res.data.forEach(async (e) => {
-      await createElement(e);
-    });
+  //creating UI element for each expense found for logged in user.(not using as we are creating element by pagination)
+  // if (res.data.length > 0) {
+  //   res.data.forEach(async (e) => {
+  //     await createElement(e);
+  //   });
+  // }
+
+  //PAGINATION
+  const pagination_div = document.getElementById("pagination-div");
+  //finding the total number of expense data/row to calculate pagination.
+  const expenses_size = res.data.length;
+  const page = Math.ceil(expenses_size / 5);
+  // creating buttons for pagination
+  let i = 1;
+  while (i <= page) {
+    let btn = document.createElement("button");
+    btn.innerText = i;
+    btn.className = "btn btn-dark";
+    btn.onmouseover = () => {
+      btn.style.backgroundColor = "green";
+    };
+    btn.onmouseout = () => {
+      btn.style.backgroundColor = "black";
+    };
+    btn.onclick = () => {
+      document.getElementById("datalist").innerText = "";
+      btn.style.backgroundColor = "blue";
+      //on 1st button expense data will be from range 0th to 4th
+      //on 2nd button expense data will be from range 5th to 9th
+      //so for button i expense data(formula) will be from [5*i-5 to 5*i]--last index is excluded
+      const page_no = btn.innerText;
+      const from = 5 * page_no - 5;
+      const to = 5 * page_no;
+      const pageData = res.data.slice(from, to);
+      pageData.forEach(async (e) => {
+        await createElement(e);
+      });
+      console.log(pageData);
+    };
+
+    pagination_div.appendChild(btn);
+    i++;
   }
+  //...pagination end...
 
   //checking if the logged in user is a premium member or not.
   const user = await axios.get(`http://localhost:3000/getuser`, {
     headers: { Authorization: token },
   });
+
   //hiding buy premium button if the user is already a premium user.
   if (user.data.ispremiumuser === true) {
     //hiding buy premium button and showing user about premium member.
@@ -81,7 +121,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("download").style.visibility = "visible";
     document.getElementById("oldLinkBtn").style.visibility = "visible";
   }
-
   //putting user_name on UI.
   document.getElementById("user-name").innerText = "Welcome " + user.data.name;
 });
@@ -134,6 +173,8 @@ document.getElementById("rzp-btn").onclick = async () => {
 //show leaderboard button click event...................................................................
 document.getElementById("leaderboard-btn").onclick = async () => {
   const parent_div = document.getElementById("leaderboard-data");
+  //clearing leaderboard if data present
+  parent_div.innerHTML = "";
   const h3 = document.createElement("h3");
   h3.innerText = "LEADERBOARD";
   let UL = document.createElement("ul");
