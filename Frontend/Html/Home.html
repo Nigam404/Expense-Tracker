@@ -52,21 +52,31 @@
       <hr />
       <button type="button" class="btn btn-info" id="add">Add Expense</button>
     </form>
-    <div id="premiumMember"></div>
-    <!-- download button -->
-    <button id="download" class="btn btn-secondary" style="visibility: hidden">
-      Download report</button
-    ><br />
-    <!-- payment button -->
-    <button id="rzp-btn" class="btn btn-warning">Buy Premium</button><br />
     <!-- leader board button -->
     <button id="leaderboard-btn" class="btn btn-success">
       Show Leaderboard
     </button>
+    <div id="premiumMember"></div>
+    <!-- download button -->
+    <button id="download" class="btn btn-secondary" style="visibility: hidden">
+      Download report
+    </button>
+    <!-- old link button and ul -->
+    <button
+      id="oldLinkBtn"
+      class="btn btn-secondary"
+      style="visibility: hidden"
+    >
+      See old downloads
+    </button>
+    <ul id="oldLinkList"></ul>
+    <br />
+    <!-- payment button -->
+    <button id="rzp-btn" class="btn btn-warning">Buy Premium</button><br />
+
     <div id="leaderboard-data"></div>
     <ul class="list-group" id="datalist">
       <li class="list-group-item"><h4>Added Expenses..</h4></li>
-      <hr />
     </ul>
     <!-- SCRIPTS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>

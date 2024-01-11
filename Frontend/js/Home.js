@@ -79,6 +79,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       "Congrats,You're a premium user.";
     //making download button visible for premium user.
     document.getElementById("download").style.visibility = "visible";
+    document.getElementById("oldLinkBtn").style.visibility = "visible";
   }
 
   //putting user_name on UI.
@@ -113,7 +114,8 @@ document.getElementById("rzp-btn").onclick = async () => {
       document.getElementById("premiumMember").innerText =
         "Congrats,You're a premium user.";
       //making download button visible for premium user.
-      document.getElementById("download").style.visibility = "visible";
+      document.getElementById("download").style.display = "visible";
+      document.getElementById("oldLinkBtn").style.visibility = "visible";
     },
   };
   const rz_pay = new Razorpay(options); //included using script src.
@@ -154,6 +156,44 @@ document.getElementById("leaderboard-btn").onclick = async () => {
 //download button click event...........................................................
 document.getElementById("download").onclick = async () => {
   const response = await axios.get(
-    "http://localhost:3000/premium/leaderboard-data"
+    "http://localhost:3000/premium/download-report",
+    { headers: { Authorization: token } }
   );
+  console.log(response);
+  if (response.status == 200) {
+    const reportURL = response.data.fileURL;
+    //creating anchor tag with reporturl and clicking
+    const link = document.createElement("a");
+    link.href = reportURL;
+    link.click();
+  } else {
+    alert("Something went wrong, Can't download file!!!");
+  }
+};
+
+//see old download button click event..........................................................
+document.getElementById("oldLinkBtn").onclick = async () => {
+  // getting old link from report url table that belongs to current user.
+  const response = await axios.get(
+    "http://localhost:3000/premium/get-old-links",
+    {
+      headers: { Authorization: token },
+    }
+  );
+
+  const parentUL = document.getElementById("oldLinkList");
+
+  if (response.data.length == 0) {
+    alert("No previous link found...");
+  } else {
+    //creating list-link element for each old link.
+    response.data.forEach((element) => {
+      let list = document.createElement("li");
+      let link = document.createElement("a");
+      link.href = element.url;
+      link.innerText = "ReportLink_" + element.createdAt;
+      list.appendChild(link);
+      parentUL.appendChild(list);
+    });
+  }
 };

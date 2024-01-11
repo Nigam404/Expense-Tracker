@@ -10,5 +10,10 @@ router.get(
   userAuthentication.authenticate,
   premiumController.downloadReport
 );
+router.get(
+  "/premium/get-old-links",
+  userAuthentication.authenticate,
+  premiumController.getOldLinks
+);
 
 module.exports = router;
