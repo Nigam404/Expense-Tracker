@@ -30,6 +30,7 @@ forgotPwBtn.onclick = async () => {
   let obj = {
     mail: email,
   };
+  console.log(obj);
 
   const response = await axios.post(
     "http://localhost:3000/password/forgotpassword",

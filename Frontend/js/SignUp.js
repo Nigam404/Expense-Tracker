@@ -10,7 +10,8 @@ async function signup(event) {
   console.log("Data->", response);
   if (response.status == 201) {
     let resDiv = document.getElementById("result");
-    resDiv.innerText = "User created successfully";
+    resDiv.innerText = "User Created Successfully";
+    alert("User Created Successfully!!!");
     location.replace("LogIn.html");
   } else {
     let resDiv = document.getElementById("result");

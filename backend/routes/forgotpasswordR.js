@@ -4,6 +4,7 @@ const userAuthentication = require("../middlewares/authentication");
 
 const router = express.Router();
 
+
 router.post(
   "/password/forgotpassword",
   forgotpasswordController.forgotPassword

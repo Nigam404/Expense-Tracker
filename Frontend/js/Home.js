@@ -1,8 +1,8 @@
 const addbtn = document.getElementById("add");
 addbtn.addEventListener("click", addExpense);
+const token = localStorage.getItem("Token"); //getting token from Local Storage.
 //create element function................................................................................
 async function createElement(obj) {
-  const token = localStorage.getItem("Token"); //getting token from LS.
   let ULlist = document.getElementById("datalist");
   //Creating list item for newly added data.
   let newLi = document.createElement("li");
@@ -35,7 +35,6 @@ async function createElement(obj) {
 
 //DRIVER FUNCTION..........................................................................................
 async function addExpense() {
-  const token = localStorage.getItem("Token"); //getting token from LS.
   let obj = {
     amount: document.getElementById("amount").value,
     description: document.getElementById("desc").value,
@@ -57,7 +56,6 @@ async function addExpense() {
 
 //Below code will execute always when dom get reloaded....................................................
 window.addEventListener("DOMContentLoaded", async () => {
-  const token = localStorage.getItem("Token"); //getting token from LS.
   const res = await axios.get("http://localhost:3000/getExp", {
     headers: { Authorization: token },
   });
@@ -79,6 +77,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("rzp-btn").style.visibility = "hidden";
     document.getElementById("premiumMember").innerText =
       "Congrats,You're a premium user.";
+    //making download button visible for premium user.
+    document.getElementById("download").style.visibility = "visible";
   }
 
   //putting user_name on UI.
@@ -87,7 +87,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 //Buy-premium button click event.........................................................................
 document.getElementById("rzp-btn").onclick = async () => {
-  const token = localStorage.getItem("Token");
   const response = await axios.get(
     "http://localhost:3000/purchase/premiummembership",
 
@@ -113,6 +112,8 @@ document.getElementById("rzp-btn").onclick = async () => {
       document.getElementById("rzp-btn").style.visibility = "hidden";
       document.getElementById("premiumMember").innerText =
         "Congrats,You're a premium user.";
+      //making download button visible for premium user.
+      document.getElementById("download").style.visibility = "visible";
     },
   };
   const rz_pay = new Razorpay(options); //included using script src.
@@ -131,10 +132,11 @@ document.getElementById("rzp-btn").onclick = async () => {
 //show leaderboard button click event...................................................................
 document.getElementById("leaderboard-btn").onclick = async () => {
   const parent_div = document.getElementById("leaderboard-data");
-  const h2 = document.createElement("h2");
-  h2.innerText = "LEADERBOARD";
+  const h3 = document.createElement("h3");
+  h3.innerText = "LEADERBOARD";
   let UL = document.createElement("ul");
   UL.className = "list-group";
+  UL.appendChild(h3);
 
   const userWithTotalExpenses = await axios.get(
     "http://localhost:3000/premium/leaderboard-data"
@@ -147,4 +149,11 @@ document.getElementById("leaderboard-btn").onclick = async () => {
     UL.appendChild(list);
   });
   parent_div.appendChild(UL);
+};
+
+//download button click event...........................................................
+document.getElementById("download").onclick = async () => {
+  const response = await axios.get(
+    "http://localhost:3000/premium/leaderboard-data"
+  );
 };

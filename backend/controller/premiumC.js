@@ -28,3 +28,5 @@ exports.getLeaderBoardData = async (req, res, next) => {
     console.log(error);
   }
 };
+
+exports.downloadReport = (req, res, next) => {};
