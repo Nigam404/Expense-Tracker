@@ -1,5 +1,6 @@
 const User = require("../models/userM");
 const AWS = require("aws-sdk");
+const dotenv = require("dotenv").config();
 const sequelize = require("../utils/database");
 const Expense = require("../models/expenseM");
 const Reporturl = require("../models/reporturlM");
@@ -35,21 +36,15 @@ exports.getLeaderBoardData = async (req, res, next) => {
 //function to upload data to aws s3.
 async function uploadToS3(data, fName) {
   try {
-    const BUCKET_NAME = "expensetrackernigam"; //created bucket or folder name inside s3.
-
-    //credentials of IAM USER.
-    const IAM_USER_KEY = "AKIA6ODU2RDGJDDH2YV3";
-    const IAM_USER_SECRET_KEY = "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";
-
     //initializing s3 bucket.
     let s3bucket = new AWS.S3({
-      accessKeyId: IAM_USER_KEY,
-      secretAccessKey: IAM_USER_SECRET_KEY,
+      accessKeyId: process.env.IAM_USER_KEY,
+      secretAccessKey: process.env.IAM_USER_SECRET_KEY,
     });
 
     //declaring parameters and uploading report file to s3 bucket.
     var params = {
-      Bucket: BUCKET_NAME,
+      Bucket: process.env.BUCKET_NAME,
       Key: fName,
       Body: data,
       ACL: "public-read", //Access control level-making our file accessable by all.

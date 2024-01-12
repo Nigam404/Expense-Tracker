@@ -32,7 +32,7 @@ exports.signUp = async (req, res, next) => {
 function generateAccessToken(id, name) {
   return jwt.sign(
     { userId: id, name: name }, //property for which we want to generate token.
-    "nigamkalpataru" //secret key
+    process.env.JWT_SECRET_KEY //secret key
   );
 }
 
@@ -69,5 +69,3 @@ exports.login = async (req, res, next) => {
     res.status(404).send("User Not Found!");
   }
 };
-
-

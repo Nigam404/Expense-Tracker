@@ -1,6 +1,11 @@
 const express = require("express");
 const bodyparser = require("body-parser");
 const cors = require("cors");
+const dotenv = require("dotenv").config();
+const helmet = require("helmet");
+const morgan = require("morgan");
+const fs = require("fs");
+const path = require("path");
 
 const signRouter = require("./routes/signR");
 const expenseRouter = require("./routes/expenseR");
@@ -18,9 +23,17 @@ const sequelize = require("./utils/database");
 
 const app = express();
 
+//file to write log
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
+
 //middlewares
 app.use(cors());
 app.use(bodyparser.json());
+app.use(helmet()); //provide security through headers.
+app.use(morgan("combined", { stream: accessLogStream })); //used to log request information.
 
 //routes
 app.use(signRouter);
@@ -40,11 +53,10 @@ Order.belongsTo(User);
 User.hasMany(Forgotpassword);
 Forgotpassword.belongsTo(User);
 
-
 //...SERVER
 sequelize
   .sync()
   .then(() => {
-    app.listen(3000);
+    app.listen(process.env.PORT);
   })
   .catch((err) => console.log(err));
