@@ -46,7 +46,7 @@ async function addExpense() {
     headers: { Authorization: token },
   });
 
-  //updating total expense->user controller
+  //updating total expense->user controller.
   await axios.post("http://localhost:3000/update-total-expense", obj, {
     headers: { Authorization: token },
   });
@@ -61,42 +61,47 @@ window.addEventListener("DOMContentLoaded", async () => {
     headers: { Authorization: token },
   });
 
-  //creating UI element for each expense found for logged in user.(not using as we are creating element by pagination)
-  // if (res.data.length > 0) {
-  //   res.data.forEach(async (e) => {
-  //     await createElement(e);
-  //   });
-  // }
-
   //PAGINATION
   const pagination_div = document.getElementById("pagination-div");
+
   //finding the total number of expense data/row to calculate pagination.
   const expenses_size = res.data.length;
-  const page = Math.ceil(expenses_size / 5);
+
+  //getting user preference size from localstorage
+  let expensesPerPage = localStorage.getItem("ExpensesPerPage");
+  if (!expensesPerPage) {
+    expensesPerPage = 5;
+  }
+  const totalpage = Math.ceil(expenses_size / expensesPerPage);
+
   // creating buttons for pagination
   let i = 1;
-  while (i <= page) {
+  while (i <= totalpage) {
     let btn = document.createElement("button");
     btn.innerText = i;
-    btn.className = "btn btn-dark";
+    btn.className = "btn btn-dark pagination-btn";
+
     btn.onmouseover = () => {
       btn.style.backgroundColor = "green";
     };
+
     btn.onmouseout = () => {
       btn.style.backgroundColor = "black";
     };
+
     btn.onclick = () => {
       document.getElementById("datalist").innerText = "";
-      btn.style.backgroundColor = "blue";
-      //on 1st button expense data will be from range 0th to 4th
-      //on 2nd button expense data will be from range 5th to 9th
-      //so for button i expense data(formula) will be from [5*i-5 to 5*i]--last index is excluded
-      const page_no = btn.innerText;
-      const from = 5 * page_no - 5;
-      const to = 5 * page_no;
-      const pageData = res.data.slice(from, to);
-      pageData.forEach(async (e) => {
-        await createElement(e);
+      btn.style.backgroundColor = "red";
+
+      const currentPage = btn.innerText;
+
+      const from = expensesPerPage * currentPage - expensesPerPage;
+      const to = expensesPerPage * currentPage;
+
+      const pageData = res.data.slice(from, to); //getting the sub array of elements for current page.
+
+      pageData.forEach(async (obj) => {
+        await createElement(obj);
       });
       console.log(pageData);
     };
@@ -104,6 +109,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     pagination_div.appendChild(btn);
     i++;
   }
+  //dynamically clicking 1st button always.
+  const pg_btn = document.getElementsByClassName("pagination-btn");
+  pg_btn[0].click();
   //...pagination end...
 
   //checking if the logged in user is a premium member or not.
@@ -125,7 +133,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("user-name").innerText = "Welcome " + user.data.name;
 });
 
-//Buy-premium button click event.........................................................................
+//Buy-premium button click event..............................................................................
 document.getElementById("rzp-btn").onclick = async () => {
   const response = await axios.get(
     "http://localhost:3000/purchase/premiummembership",
@@ -170,7 +178,7 @@ document.getElementById("rzp-btn").onclick = async () => {
   });
 };
 
-//show leaderboard button click event...................................................................
+//show leaderboard button click event........................................................................
 document.getElementById("leaderboard-btn").onclick = async () => {
   const parent_div = document.getElementById("leaderboard-data");
   //clearing leaderboard if data present
@@ -194,7 +202,7 @@ document.getElementById("leaderboard-btn").onclick = async () => {
   parent_div.appendChild(UL);
 };
 
-//download button click event...........................................................
+//download button click event.........................................................................
 document.getElementById("download").onclick = async () => {
   const response = await axios.get(
     "http://localhost:3000/premium/download-report",
@@ -212,7 +220,7 @@ document.getElementById("download").onclick = async () => {
   }
 };
 
-//see old download button click event..........................................................
+//see old download button click event....................................................................
 document.getElementById("oldLinkBtn").onclick = async () => {
   // getting old link from report url table that belongs to current user.
   const response = await axios.get(
@@ -237,4 +245,13 @@ document.getElementById("oldLinkBtn").onclick = async () => {
       parentUL.appendChild(list);
     });
   }
+};
+
+//save button click event...saving user preference number of expenses per page...................................................................................
+document.getElementById("save_page").onclick = () => {
+  const expensesPerPage = document.getElementById("expensesPerPage").value;
+  //saving preferences in local storage.
+  localStorage.setItem("ExpensesPerPage", expensesPerPage);
+  alert("Preference Saved!!!");
+  location.reload();
 };

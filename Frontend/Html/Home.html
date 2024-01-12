@@ -70,13 +70,24 @@
     >
       See old downloads
     </button>
+    <!-- ul for showing old links -->
     <ul id="oldLinkList"></ul>
     <br />
     <!-- payment button -->
     <button id="rzp-btn" class="btn btn-warning">Buy Premium</button><br />
 
+    <!-- div for showing leaderboard data -->
     <div id="leaderboard-data"></div>
+    <!-- dropdown for how many page user want to see -->
+    please select the number of expenses/page:
+    <select id="expensesPerPage">
+      <option value="5" selected>5</option>
+      <option value="10">10</option>
+      <option value="15">15</option>
+    </select>
+    <button id="save_page">save</button>
     <h4>Added Expenses..</h4>
+    <!-- ul list for showing added expenses -->
     <ul class="list-group" id="datalist"></ul>
     <div id="pagination-div"></div>
     <!-- SCRIPTS -->
